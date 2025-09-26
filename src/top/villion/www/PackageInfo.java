@@ -61,12 +61,21 @@ public class PackageInfo {
      * @throws IllegalArgumentException 当CSV行格式错误（字段数量不是5个）时抛出
      */
     public static PackageInfo fromCSV(String line){
+        // 1. 按CSV的“逗号分隔”规则，把一行字符串拆成数组
+        // 例：CSV行“张三,2024001,顺丰,SF123456,已取件”会拆成 ["张三","2024001","顺丰","SF123456","已取件"]
         String[] parts = line.split(",");
+        // 2. 校验CSV格式是否正确：必须包含5个字段（姓名、学号、公司、单号、状态）
+        // 若字段数不对，直接抛出异常，提示格式错误
         if(parts.length != 5) {
             throw new IllegalArgumentException("Invalid CSV line: " + line);
         }
+        // 3. 用拆分后的前4个字段，创建PackageInfo对象（基础信息）
         PackageInfo p = new PackageInfo(parts[0], parts[1], parts[2], parts[3]);
-        p.pickedUp = parts[4].equals("已取件");
+        if ("已取件".equals(parts[4])) {
+            // 4. 根据第5个字段（状态）设置对象的pickedUp属性
+            p.PickUp(); // 如果状态是“已取件”，调用PickUp方法标记为已取
+        }
+        // 5. 返回创建并初始化好的PackageInfo对象
         return p;
     }
     @Override
