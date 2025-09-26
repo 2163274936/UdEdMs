@@ -38,6 +38,37 @@ public class PackageInfo {
      *
      * @return 格式化的包裹信息字符串
      */
+    public String getTrackingNumber() {
+        return trackingNumber;
+    }
+    //永久保存快递属于转为csv文本文件
+    // 把对象转成一行字符串，用于保存到文件
+    public String toCSV() {
+        return studentName + "," + studentId + "," + company + "," + trackingNumber + "," + (pickedUp ? "已取件" : "取件");
+    }
+    //从一行csv创建对象
+    /**
+     * 静态方法：将CSV格式的一行字符串解析并转换为PackageInfo对象
+     *
+     * 功能说明：
+     * 该方法是CSV数据与PackageInfo对象之间的转换器，
+     * 接收一个符合格式的CSV行字符串，按规则解析后创建并返回对应的对象，
+     * 常用于从CSV文件读取数据时进行格式转换
+     *
+     * @param line 单个CSV行字符串，格式要求："姓名,学号,快递公司,快递单号,状态"
+     *             例如："张三,2024001,顺丰,SF123456,已取件"
+     * @return 转换后的PackageInfo对象，包含解析出的所有快递信息
+     * @throws IllegalArgumentException 当CSV行格式错误（字段数量不是5个）时抛出
+     */
+    public static PackageInfo fromCSV(String line){
+        String[] parts = line.split(",");
+        if(parts.length != 5) {
+            throw new IllegalArgumentException("Invalid CSV line: " + line);
+        }
+        PackageInfo p = new PackageInfo(parts[0], parts[1], parts[2], parts[3]);
+        p.pickedUp = parts[4].equals("已取件");
+        return p;
+    }
     @Override
     public String toString() {
         return "姓名：" + studentName + ", 单号：" + trackingNumber +
